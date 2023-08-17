@@ -72,6 +72,15 @@ Example body
 ```
 **DELETE /api/genres/{id}** - destroy<br>
 
+## Установка с Docker
+
+- Загрузите репозиторий с помощью команды ```git clone https://github.com/AndrewYaremenko/ITGroup-test-task.git```
+- Перейдите в директорию проекта
+- Установите необходимые PHP библиотеки, выполнив команду: ```composer install```
+- Скопируйте файл ```.env.docker``` и переименуйте его в ```.env```
+- Сгенерируйте ключ приложения, выполнив команду: ```php artisan key:generate```
+- Запустить приложение: ```docker-compose up -d```
+
 ## Установка без Docker
 
 - Загрузите репозиторий с помощью команды ```git clone https://github.com/AndrewYaremenko/ITGroup-test-task.git```
