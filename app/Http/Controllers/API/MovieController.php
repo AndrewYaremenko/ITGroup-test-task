@@ -14,6 +14,7 @@ class MovieController extends Controller
         'title' => ['required', 'string', 'min: 2','max:35'],
         'publication_status' => ['boolean'],
         'poster_link' => ['string'],
+        'genres' => ['required']
     ];
 
     public function index()
@@ -28,8 +29,10 @@ class MovieController extends Controller
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 400);
         }
+        $validatedData = $validator->validated();
 
-        $movie = Movie::create($validator->validated());
+        $movie = Movie::create($validatedData);
+        $movie->genres()->attach($validatedData['genres']);
 
         return response()->json($movie);
     }
@@ -52,9 +55,13 @@ class MovieController extends Controller
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 400);
         }
+        $validatedData = $validator->validated();
 
         $movie = Movie::findOrFail($id);
-        $movie->update($validator->validated());
+
+        $movie->genres()->sync($validatedData['genres']);
+
+        $movie->update($validatedData);
 
         return response()->json($movie);
     }
