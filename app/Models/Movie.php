@@ -19,5 +19,6 @@ class Movie extends Model
     public function publish()
     {
         $this->update(['publication_status' => true]);
+        return $this;
     }
 }

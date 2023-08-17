@@ -25,13 +25,19 @@ class MovieController extends Controller
         //
     }
 
+    public function publish(string $id)
+    {
+        $movie = Movie::find($id);
+        return $movie->publish();
+    }
+
     /**
      * Display the specified resource.
      */
     public function show(string $id)
     {
         $movie = Movie::findOrFail($id);
-        return response()->json($movie->genres->paginate(3));
+        return response()->json($movie->genres()->paginate(3));
     }
 
     /**
