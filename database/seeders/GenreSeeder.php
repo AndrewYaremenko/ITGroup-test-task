@@ -7,6 +7,7 @@ use App\Models\Genre;
 
 class GenreSeeder extends Seeder
 {
+
     public function run(): void
     {
         Genre::create(['name' => 'Action']);

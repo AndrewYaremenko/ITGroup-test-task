@@ -8,6 +8,7 @@ use App\Models\Genre;
 
 class MovieGenreSeeder extends Seeder
 {
+
     public function run(): void
     {
 

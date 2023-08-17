@@ -7,6 +7,9 @@ use App\Models\Movie;
 
 class MovieSeeder extends Seeder
 {
+
+    protected $priority = 30;
+
     public function run(): void
     {
         Movie::create([
