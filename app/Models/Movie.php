@@ -15,4 +15,9 @@ class Movie extends Model
     {
         return $this->belongsToMany(Genre::class, 'movie_genres', 'movie_id', 'genre_id');
     }
+
+    public function publish()
+    {
+        $this->update(['publication_status' => true]);
+    }
 }
