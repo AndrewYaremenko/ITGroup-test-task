@@ -5,24 +5,33 @@ namespace App\Http\Controllers\API;
 use App\Models\Movie;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class MovieController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+
+    private $rulesValidation = [
+        'title' => ['required', 'string', 'min: 2','max:35'],
+        'publication_status' => ['boolean'],
+        'poster_link' => ['string'],
+    ];
+
     public function index()
     {
         $movies = Movie::paginate(3);
         return response()->json($movies);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $validator = Validator::make($request->json()->all(), $this->rulesValidation);
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 400);
+        }
+
+        $movie = Movie::create($validator->validated());
+
+        return response()->json($movie);
     }
 
     public function publish(string $id)
@@ -31,28 +40,31 @@ class MovieController extends Controller
         return $movie->publish();
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
         $movie = Movie::findOrFail($id);
-        return response()->json($movie->genres()->paginate(3));
+        return response()->json($movie);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, string $id)
     {
-        //
+        $validator = Validator::make($request->json()->all(), $this->rulesValidation);
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 400);
+        }
+
+        $movie = Movie::findOrFail($id);
+        $movie->update($validator->validated());
+
+        return response()->json($movie);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
-        //
+        $movie = Movie::findOrFail($id);
+
+        $movie->delete();
+
+        return response()->json(['message' => 'Movie deleted'], 200);
     }
 }
