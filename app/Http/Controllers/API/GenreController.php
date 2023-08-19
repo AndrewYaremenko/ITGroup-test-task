@@ -4,20 +4,10 @@ namespace App\Http\Controllers\API;
 
 use App\Models\Genre;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
+use App\Http\Requests\GenreRequest;
 
 class GenreController extends Controller
 {
-    
-    /**
-     * rulesValidation
-     *
-     * @var array
-     */
-    private $rulesValidation = [
-        'name' => ['required', 'string', 'min: 3', 'max:30'],
-    ];
     
     /**
      * index
@@ -36,15 +26,10 @@ class GenreController extends Controller
      * @param  mixed $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(Request $request)
+    public function store(GenreRequest $request)
     {
-        $validator = Validator::make($request->json()->all(), $this->rulesValidation);
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 400);
-        }
-
-        $genre = Genre::create($validator->validated());
-
+        $genre = Genre::create($request->validated());
+    
         return response()->json($genre);
     }
     
@@ -67,16 +52,11 @@ class GenreController extends Controller
      * @param  mixed $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(Request $request, string $id)
+    public function update(GenreRequest $request, string $id)
     {
-        $validator = Validator::make($request->json()->all(), $this->rulesValidation);
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 400);
-        }
-
         $genre = Genre::findOrFail($id);
-        $genre->update($validator->validated());
-
+        $genre->update($request->validated());
+    
         return response()->json($genre);
     }
     

@@ -4,23 +4,10 @@ namespace App\Http\Controllers\API;
 
 use App\Models\Movie;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
+use App\Http\Requests\MovieRequest;
 
 class MovieController extends Controller
 {
-    
-    /**
-     * rulesValidation
-     *
-     * @var array
-     */
-    private $rulesValidation = [
-        'title' => ['required', 'string', 'min: 2','max:35'],
-        'publication_status' => ['boolean'],
-        'poster_link' => ['string'],
-        'genres' => ['required']
-    ];
     
     /**
      * index
@@ -39,18 +26,14 @@ class MovieController extends Controller
      * @param  mixed $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(Request $request)
+    public function store(MovieRequest $request)
     {
-        $validator = Validator::make($request->json()->all(), $this->rulesValidation);
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 400);
-        }
-        $validatedData = $validator->validated();
+        $validatedData = $request->validated();
 
         $movie = Movie::create($validatedData);
         $movie->genres()->attach($validatedData['genres']);
-
-        return response()->json($movie);
+    
+        return response()->json($movie->load('genres'));
     }
     
     /**
@@ -84,21 +67,15 @@ class MovieController extends Controller
      * @param  mixed $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(Request $request, string $id)
+    public function update(MovieRequest $request, string $id)
     {
-        $validator = Validator::make($request->json()->all(), $this->rulesValidation);
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 400);
-        }
-        $validatedData = $validator->validated();
+        $validatedData = $request->validated();
 
         $movie = Movie::findOrFail($id);
-
         $movie->genres()->sync($validatedData['genres']);
-
         $movie->update($validatedData);
-
-        return response()->json($movie);
+    
+        return response()->json($movie->load('genres'));
     }
     
     /**
